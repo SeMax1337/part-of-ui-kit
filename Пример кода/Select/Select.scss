@@ -1,0 +1,566 @@
+@import "../../lib/variables";
+@import "../../lib/mixins";
+
+// stylelint-disable no-descending-specificity
+
+$selectSmallHeight: 22px;
+$selectHeight: 40px;
+$selectLargeHeight: 48px;
+$selectBigHeight: 50px;
+
+$selectBigLineHeightK: 1.3;
+$selectBigFontSize: 16px;
+$selectBigInputPlaceholderMinFontSize: 13px;
+$selectBigInputPlaceholderScaleK: $selectBigInputPlaceholderMinFontSize/$selectBigFontSize;
+$selectBigPaddingRight: 32px;
+$selectBigBorderW: 1px;
+$selectBigPaddingLeft: 10px;
+$selectBigArrowH: 6px;
+$selectBigArrowW: 10px;
+$selectBigAnimDur: 0.1s;
+
+$transitionFunction: cubic-bezier(0.25, 0.1, 0.25, 1);
+$transitionTime: 0.2s;
+
+.Select {
+  position: relative;
+  display: block;
+  font-size: 0;
+  line-height: normal;
+  vertical-align: bottom;
+  text-align: left;
+  user-select: none;
+
+  --arrowOffset: 12px;
+
+  & > .Select__nativeElement {
+    position: absolute;
+    opacity: 0;
+    width: 1px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    cursor: default;
+  }
+}
+
+.Select:focus {
+  outline: none;
+
+  .Select__placeholder {
+    box-shadow: 0 0 0 4px $xLightGreen;
+    border-color: $mediumGreen !important;
+  }
+}
+
+.Select_native .Select__nativeElement {
+  width: 100% !important;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.Select__widget {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  height: inherit;
+  font-size: $fontNormal2;
+}
+
+.Select__widget_native .Select__options {
+  display: none !important;
+}
+
+.Select_error {
+  .Select__widget .Select__placeholder[class] {
+    border-color: $red;
+
+    &:hover {
+      border-color: $jinoRed;
+    }
+  }
+}
+
+.Select__placeholder {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  height: inherit;
+  overflow: hidden;
+  border: 1px solid $mediumGrey;
+  background-color: $white;
+  color: inherit;
+  text-decoration: none;
+  cursor: default;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  outline: none;
+  box-sizing: border-box;
+  border-radius: 2px;
+  box-shadow: 0 0 0 0 $xLightGreen;
+  transition:
+    border-color $transitionTime $transitionFunction,
+    box-shadow $transitionTime $transitionFunction;
+
+  .Select__widget_opened > & {
+    z-index: 110;
+    border-color: $mediumGreen !important;
+    box-shadow: 0 0 0 4px $xLightGreen;
+  }
+
+  .Select__widget_top > & {
+    border-radius: 0 0 2px 2px;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background-color: inherit;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 3px;
+    background-image: url('../../lib/simplearrows/simplearrows.svg');
+    background-size: 26px auto;
+  }
+
+  &:hover {
+    border-color: $semiDarkGrey;
+  }
+
+  &:hover .Select__arrow {
+    color: $semiDarkGrey;
+  }
+}
+
+.Select__placeholder_highlighted {
+  background-color: $xLightYellow;
+}
+
+.Select__arrow {
+  position: absolute;
+  top: var(--arrowOffset);
+  bottom: var(--arrowOffset);
+  right: var(--arrowOffset);
+  color: $semiDarkGrey;
+  transition: transform $transitionTime $transitionFunction;
+}
+
+.Select__arrow_up {
+  transform: rotate(-180deg);
+}
+
+.Select__options {
+  position: absolute;
+  left: 0;
+  min-width: 100%;
+  max-width: 100%;
+  z-index: 100;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  background-color: $white;
+  box-shadow: 0 2px 20px rgba($black, 0.08);
+  border-radius: 8px;
+  box-sizing: border-box;
+  list-style: none;
+  overscroll-behavior: contain;
+  font-size: 14px;
+
+  .Select__widget_top > & {
+    top: auto;
+  }
+
+  .Select__widget_left > & {
+    left: auto;
+    right: 0;
+  }
+
+  .Select__widget_calculating > & {
+    position: fixed;
+    visibility: hidden;
+  }
+}
+
+.Select__optionsInner {
+  padding: 8px 0;
+}
+
+.Select__widget_optgroup_options {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.Select_size_s {
+  height: $selectSmallHeight;
+
+  & > select,
+  & > .Select__widget {
+    font-size: $fontNormal;
+  }
+
+  .Select__placeholder {
+    padding: 0 17px 0 4px;
+
+    @include lineheight-mozfix($selectSmallHeight - 2px);
+
+    &::before {
+      width: 17px;
+    }
+
+    &::after {
+      top: ceil(($selectSmallHeight - 2px - 3px) / 2);
+      right: 6px;
+    }
+  }
+
+  & .Select__options {
+    top: $selectSmallHeight - 1px;
+  }
+
+  & .Select__widget_top > .Select__options {
+    top: auto;
+    bottom: $selectSmallHeight - 1px;
+  }
+}
+
+.Select_size_m {
+  height: $selectHeight;
+
+  & > .Select__nativeElement,
+  & > .Select__widget {
+    font-size: $fontMedium;
+  }
+
+  .Select__placeholder {
+    border-radius: 8px;
+    padding: 0 40px 0 12px;
+
+    @include lineheight-mozfix($selectHeight - 2px);
+
+    &::before {
+      content: normal;
+    }
+
+    &::after {
+      content: normal;
+    }
+  }
+
+  & .Select__widget > .Select__options {
+    top: $selectHeight + 8px;
+  }
+
+  & .Select__widget_top > .Select__options {
+    top: auto;
+    bottom: $selectHeight + 8px;
+  }
+
+  .Select__label {
+    transform: none;
+    line-height: 40px;
+  }
+
+  .Select__label_raised {
+    display: none;
+  }
+}
+
+.Select_size_l {
+  height: $selectLargeHeight;
+
+  --arrowOffset: 16px;
+
+  & > .Select__nativeElement,
+  & > .Select__widget {
+    font-size: $fontNormal2;
+  }
+
+  .Select__placeholder {
+    border-radius: 10px;
+    padding: 0 48px 0 15px;
+
+    @include lineheight-mozfix($selectLargeHeight - 2px);
+
+    &::before {
+      content: normal;
+    }
+
+    &::after {
+      content: normal;
+    }
+  }
+
+  & .Select__widget > .Select__options {
+    top: $selectLargeHeight + 8px;
+  }
+
+  & .Select__widget_top > .Select__options {
+    top: auto;
+    bottom: $selectLargeHeight + 8px;
+  }
+
+  .Select__label {
+    font-size: $fontMedium;
+    line-height: $selectBigHeight - 2 * $selectBigBorderW; // for firefox
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .Select__label_raised {
+    transform: scale($selectBigInputPlaceholderScaleK, $selectBigInputPlaceholderScaleK);
+    margin-bottom: -38px;
+  }
+}
+
+.Select_size_xl {
+  height: $selectBigHeight;
+
+  & > select,
+  & > .Select__widget {
+    font-size: $selectBigFontSize;
+  }
+
+  .Select__placeholder {
+    padding: 0 $selectBigPaddingRight 0 $selectBigPaddingLeft;
+
+    @include lineheight-mozfix($selectBigHeight - 2 * $selectBigBorderW - 1px);
+
+    transition: background-color $selectBigAnimDur, border-color $selectBigAnimDur;
+
+    &::before {
+      width: $selectBigPaddingRight;
+    }
+
+    &::after {
+      top: ceil(($selectBigHeight - 2 * $selectBigBorderW - $selectBigArrowH) / 2);
+      right: round(($selectBigPaddingRight - $selectBigArrowW)/2);
+      width: $selectBigArrowW;
+      height: $selectBigArrowH;
+      background: svg-load('./icons/big-arrow.svg', fill=$darkGrey) no-repeat;
+    }
+  }
+
+  & .Select__widget > .Select__options {
+    top: $selectBigHeight - $selectBigBorderW;
+  }
+
+  & .Select__widget_top > .Select__options {
+    top: auto;
+    bottom: $selectBigHeight - $selectBigBorderW;
+  }
+
+  select[disabled] + .Select__widget .Select__placeholder::after {
+    background-image: svg-load('./icons/big-arrow.svg', fill=$semiDarkGrey);
+  }
+}
+
+.Select__label {
+  display: block;
+  color: $darkGrey;
+  transform-origin: 0 -30px 0;
+  transition: transform 0.1s;
+}
+
+.Select__label_raised {
+  margin-bottom: -40px;
+}
+
+select[disabled] + .Select__widget .Select__label {
+  color: $semiDarkGrey;
+}
+
+.Select__label_required {
+  &::after {
+    content: '*';
+    font-family: Arial, Helvetica, sans-serif;
+    display: inline;
+  }
+}
+
+.Select__nativeElement[disabled] + .Select__widget > .Select__placeholder {
+  border-color: $semiLightGrey;
+  color: $darkGrey;
+  background: $lightGrey;
+}
+
+.Select__options_fade_active,
+.Select__options_fade_leaveActive {
+  transition:
+    opacity $transitionTime $transitionFunction,
+    transform $transitionTime $transitionFunction;
+  overflow: auto !important;
+}
+
+.Select__options_fade_enter,
+.Select__options_fade_leaveTo {
+  transform: translateY(-16px);
+  opacity: 0;
+}
+
+.Select__widget_top {
+  .Select__options_fade_enter,
+  .Select__options_fade_leaveTo {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+}
+
+.SelectItem__option,
+.SelectItem__label {
+  margin: 0;
+  font: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.SelectItem__label {
+  display: inline-block;
+  width: 100%;
+  color: $darkGrey;
+  font-weight: bold;
+  cursor: default;
+  padding: 0 12px;
+}
+
+.SelectItem__option {
+  padding: 0 16px;
+  position: relative;
+  z-index: 1;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 8px;
+    right: 8px;
+    display: block;
+    background: transparent;
+    z-index: -1;
+    border-radius: 4px;
+  }
+}
+
+.SelectItem__option_selected::before {
+  background-color: $lightGrey;
+}
+
+.SelectItem__option_highlighted::before {
+  background-color: $semiLightGrey;
+}
+
+.SelectItem_level_1 > .SelectItem__label {
+  letter-spacing: 1px;
+}
+
+.SelectItem_level_1:first-child > .SelectItem__label {
+  border-top: none;
+}
+
+.SelectItem_level_2 > .SelectItem__label {
+  position: relative;
+  color: $semiDarkGrey;
+}
+
+.SelectItem_level_2:not(:first-child) > .SelectItem__label {
+  padding-top: 4px;
+  margin-top: 8px;
+
+  &::before {
+    content: '';
+    display: block;
+    top: 0;
+    left: 12px;
+    right: 12px;
+    height: 1px;
+    background: $semiLightGrey;
+    position: absolute;
+  }
+}
+
+.SelectItem_size_s {
+  .SelectItem__option,
+  .SelectItem__label {
+    @include lineheight-mozfix($selectSmallHeight - 2px);
+  }
+
+  &.SelectItem_level_1 > .SelectItem__label {
+    @include lineheight-mozfix($selectSmallHeight - 2px - 1px);
+  }
+
+  &.SelectItem_level_1:first-child > .SelectItem__label {
+    @include lineheight-mozfix($selectSmallHeight - 2px);
+  }
+
+  @for $i from 1 to 10 {
+    &.SelectItem_level_#{$i} {
+      & > .SelectItem__label,
+      & .SelectItem__option {
+        padding-left: 20px * ($i - 1) + 4px;
+      }
+    }
+  }
+}
+
+.SelectItem_size_m,
+.SelectItem_size_l {
+  .SelectItem__option {
+    line-height: 44px;
+  }
+
+  .SelectItem__label {
+    line-height: 30px;
+  }
+
+  &.SelectItem_level_1.SelectItem_hasSubs:not(:first-child) {
+    margin-top: 8px;
+    padding-top: 5px;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      display: block;
+      top: 0;
+      left: 8px;
+      right: 8px;
+      height: 1px;
+      background: $semiLightGrey;
+    }
+  }
+}
+
+.SelectItem_size_xl {
+  .SelectItem__option,
+  .SelectItem__label {
+    padding: 4px $selectBigPaddingRight 4px $selectBigPaddingLeft;
+
+    @include lineheight-mozfix(ceil($selectBigFontSize * $selectBigLineHeightK), $paddingBottomInitial: 4px);
+  }
+
+  @for $i from 1 to 10 {
+    &.SelectItem_level_#{$i} {
+      & > .SelectItem__label,
+      & .SelectItem__option {
+        padding-left: 20px * ($i - 1) + $selectBigPaddingLeft;
+      }
+    }
+  }
+}
+
+@media (pointer: fine) {
+  .Select__options {
+    @include scrollbar($hidden: true);
+  }
+}
